@@ -1,3 +1,5 @@
+const BASE_URL = 'http://localhost:3000/api';
+
 let totalQuantity = 0;
 let totalPrice = 0;
 let totalQuantitySpan = document.getElementById('totalQuantity');
@@ -15,7 +17,7 @@ const hasNumber = (string) => {
  * Get cart from localstorage
  * @returns JSON
  */
-function getCart(){
+function getCart() {
     if (localStorage.getItem("cart") === null) {
         localStorage.setItem("cart", JSON.stringify({}));
     }
@@ -26,17 +28,17 @@ function getCart(){
  * Fetch product by id from API
  * @param {string} id 
  */
-function fetchProductById(id){
-    fetch(`http://localhost:3000/api/products/${id}`)
-    .then((res) => {
-        return res.json();
-    })
-    .then((result) => {
-        printProduct(id, result);
-    })
-    .catch((err) => {
-        console.log(err);
-    })
+function fetchProductById(id) {
+    fetch(`${BASE_URL}/products/${id}`)
+        .then((res) => {
+            return res.json();
+        })
+        .then((result) => {
+            printProduct(id, result);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
 }
 
 /**
@@ -44,110 +46,110 @@ function fetchProductById(id){
  * @param {string} id 
  * @param {object} result 
  */
-function printProduct(id, result){
+function printProduct(id, result) {
     let section = document.getElementById("cart__items");
     let cart = getCart();
-    for(let color in cart[id]){
+    for (let color in cart[id]) {
         let quantity = cart[id][color];
         let article = document.createElement('article');
-            article.classList.add('cart__item');
-            article.dataset.id = id;
-            article.dataset.color = color;
+        article.classList.add('cart__item');
+        article.dataset.id = id;
+        article.dataset.color = color;
 
-            let divImg = document.createElement('div');
-            divImg.classList.add('cart__item__img');
+        let divImg = document.createElement('div');
+        divImg.classList.add('cart__item__img');
 
-            let img = document.createElement('img');
-            img.src = result['imageUrl'];
-            img.alt = result["altTxt"];
+        let img = document.createElement('img');
+        img.src = result['imageUrl'];
+        img.alt = result["altTxt"];
 
-            divImg.appendChild(img);
+        divImg.appendChild(img);
 
-            let divCartItemContent = document.createElement('div');
-            divCartItemContent.classList.add('cart__item__content');
+        let divCartItemContent = document.createElement('div');
+        divCartItemContent.classList.add('cart__item__content');
 
-            let divCartItemDescription = document.createElement('div');
-            divCartItemDescription.classList.add('cart__item__content__description');
+        let divCartItemDescription = document.createElement('div');
+        divCartItemDescription.classList.add('cart__item__content__description');
 
-            let productName = document.createElement('h2');
-            productName.textContent = result["name"];
+        let productName = document.createElement('h2');
+        productName.textContent = result["name"];
 
-            let productColor = document.createElement('p');
-            productColor.textContent = color;
+        let productColor = document.createElement('p');
+        productColor.textContent = color;
 
-            let productPrice = document.createElement('p');
-            productPrice.textContent = `${result["price"]} €`;
+        let productPrice = document.createElement('p');
+        productPrice.textContent = `${result["price"]} €`;
 
-            divCartItemDescription.appendChild(productName);
-            divCartItemDescription.appendChild(productColor);
-            divCartItemDescription.appendChild(productPrice);
+        divCartItemDescription.appendChild(productName);
+        divCartItemDescription.appendChild(productColor);
+        divCartItemDescription.appendChild(productPrice);
 
-            let divCartItemSettings = document.createElement('div');
-            divCartItemSettings.classList.add('cart__item__content__settings');
+        let divCartItemSettings = document.createElement('div');
+        divCartItemSettings.classList.add('cart__item__content__settings');
 
-            let divCartItemQuantity = document.createElement('div');
-            divCartItemQuantity.classList.add('cart__item__content__settings__quantity');
+        let divCartItemQuantity = document.createElement('div');
+        divCartItemQuantity.classList.add('cart__item__content__settings__quantity');
 
-            let productQuantity = document.createElement('p');
-            productQuantity.textContent = 'Qté : ';
+        let productQuantity = document.createElement('p');
+        productQuantity.textContent = 'Qté : ';
 
-            let inputQuantity = document.createElement('input');
-            inputQuantity.type = 'number';
-            inputQuantity.classList.add('itemQuantity');
-            inputQuantity.name = 'itemQuantity';
-            inputQuantity.min = "1";
-            inputQuantity.max = "100";
-            inputQuantity.value = quantity;
+        let inputQuantity = document.createElement('input');
+        inputQuantity.type = 'number';
+        inputQuantity.classList.add('itemQuantity');
+        inputQuantity.name = 'itemQuantity';
+        inputQuantity.min = "1";
+        inputQuantity.max = "100";
+        inputQuantity.value = quantity;
 
-            inputQuantity.addEventListener("change", () => {
-                let qte = inputQuantity.value;
-                if(qte >= 100){
-                    qte = 100;
-                    inputQuantity.value = qte;
-                } else if(qte <= 0){
-                    qte = 1;
-                    inputQuantity.value = qte;
-                }
-                updateCartPriceQuantity(id, color, qte, result['price']);
-            })
-            
-            divCartItemQuantity.appendChild(productQuantity);
-            divCartItemQuantity.appendChild(inputQuantity);
+        inputQuantity.addEventListener("change", () => {
+            let qte = inputQuantity.value;
+            if (qte >= 100) {
+                qte = 100;
+                inputQuantity.value = qte;
+            } else if (qte <= 0) {
+                qte = 1;
+                inputQuantity.value = qte;
+            }
+            updateCartPriceQuantity(id, color, qte, result['price']);
+        })
+
+        divCartItemQuantity.appendChild(productQuantity);
+        divCartItemQuantity.appendChild(inputQuantity);
 
 
-            let divDeleteItem = document.createElement('div');
-            divDeleteItem.classList.add('cart__item__content__settings__delete');
+        let divDeleteItem = document.createElement('div');
+        divDeleteItem.classList.add('cart__item__content__settings__delete');
 
-            let deleteBtn = document.createElement('p');
-            deleteBtn.classList.add('deleteItem');
-            deleteBtn.textContent = 'Supprimer';
+        let deleteBtn = document.createElement('p');
+        deleteBtn.classList.add('deleteItem');
+        deleteBtn.textContent = 'Supprimer';
 
-            deleteBtn.addEventListener('click', () => {
-                deleteProductFromCart(id, color, cart[id][color], result['price']);
-            })
+        deleteBtn.addEventListener('click', () => {
+            deleteProductFromCart(id, color, cart[id][color], result['price']);
+        })
 
-            divDeleteItem.appendChild(deleteBtn);
+        divDeleteItem.appendChild(deleteBtn);
 
-            divCartItemSettings.appendChild(divCartItemQuantity);
-            divCartItemSettings.appendChild(divDeleteItem);
+        divCartItemSettings.appendChild(divCartItemQuantity);
+        divCartItemSettings.appendChild(divDeleteItem);
 
-            divCartItemContent.appendChild(divCartItemDescription);
-            divCartItemContent.appendChild(divCartItemSettings);
+        divCartItemContent.appendChild(divCartItemDescription);
+        divCartItemContent.appendChild(divCartItemSettings);
 
-            article.appendChild(divImg);
-            article.appendChild(divCartItemContent);
-            article.appendChild(divCartItemContent);
+        article.appendChild(divImg);
+        article.appendChild(divCartItemContent);
+        article.appendChild(divCartItemContent);
 
-            section.appendChild(article);
+        section.appendChild(article);
 
-            setTotalQuantityAndPrice(1, quantity, result["price"]);
+        setTotalQuantityAndPrice(1, quantity, result["price"]);
     }
 }
 
 /**
  * Init cart, load ID and product
  */
-function loadCart(){
+function loadCart() {
     totalQuantity = 0;
     totalPrice = 0;
     let ids = Object.keys(getCart());
@@ -163,11 +165,11 @@ function loadCart(){
  * @param {int} newQte 
  * @param {int} price 
  */
-function updateCartPriceQuantity(id, color, newQte, price){
+function updateCartPriceQuantity(id, color, newQte, price) {
     let cart = getCart();
     let oldQte = cart[id][color];
     let qte;
-    if(newQte > oldQte){
+    if (newQte > oldQte) {
         let qteToAdd = newQte - oldQte;
         qte = oldQte + qteToAdd;
         setTotalQuantityAndPrice(1, qteToAdd, price);
@@ -185,7 +187,7 @@ function updateCartPriceQuantity(id, color, newQte, price){
  * @param {string} color 
  * @param {int} qte 
  */
-function updateCart(id, color, qte){
+function updateCart(id, color, qte) {
     let cart = getCart();
     let product = cart[id];
     product[color] = qte
@@ -199,13 +201,13 @@ function updateCart(id, color, qte){
  * @param {int} quantity 
  * @param {int} price 
  */
- function setTotalQuantityAndPrice(type, quantity, price) {
-    if(type === 1){
+function setTotalQuantityAndPrice(type, quantity, price) {
+    if (type === 1) {
         totalQuantity += quantity;
         totalPrice += quantity * price;
-    } else if(type === 2) {
+    } else if (type === 2) {
         totalQuantity -= quantity;
-        totalPrice -= quantity * price;        
+        totalPrice -= quantity * price;
         console.log(quantity, price, totalPrice, totalQuantity);
     }
     totalQuantitySpan.textContent = totalQuantity;
@@ -245,7 +247,7 @@ orderBtn.addEventListener("click", (e) => {
 /**
  * Check form validity
  */
-function isFormCorrect(){
+function isFormCorrect() {
     let valid = true;
     const firstName = document.getElementById('firstName').value;
     const lastName = document.getElementById('lastName').value;
@@ -253,36 +255,36 @@ function isFormCorrect(){
     const city = document.getElementById('city').value;
     const email = document.getElementById('email').value;
 
-    if(hasNumber(firstName)){
+    if (hasNumber(firstName)) {
         errorMessage('Prénom invalide il ne doit pas contenir de chiffre.', 'firstNameErrorMsg');
         valid = false;
     }
-    if(firstName === ''){
+    if (firstName === '') {
         errorMessage('Le champ prénom ne peut être vide.', 'firstNameErrorMsg');
         valid = false;
     }
-    if(hasNumber(lastName)){
+    if (hasNumber(lastName)) {
         errorMessage('Nom invalide il ne doit pas contenir de chiffre.', 'lastNameErrorMsg');
         valid = false;
     }
-    if(lastName === ''){
+    if (lastName === '') {
         errorMessage('Le champ nom ne peut être vide.', 'lastNameErrorMsg');
         valid = false;
     }
-    if(addr === ''){
+    if (addr === '') {
         errorMessage('Le champ addresse ne peut être vide.', 'addressErrorMsg');
         valid = false;
     }
-    if(city === ''){
+    if (city === '') {
         errorMessage('Le champ ville ne peut être vide.', 'cityErrorMsg');
         valid = false;
     }
-    if(!validEmail(email)){
+    if (!validEmail(email)) {
         errorMessage('Addresse email invalide.', 'emailErrorMsg');
         valid = false;
     }
 
-    if(valid){
+    if (valid) {
         let ids = Object.keys(getCart());
         postForm(firstName, lastName, addr, city, email, ids);
     }
@@ -297,8 +299,8 @@ function isFormCorrect(){
  * @param {string} email 
  * @param {array} ids 
  */
-function postForm(firstName, lastName, addr, city, email, ids){
-    fetch('http://localhost:3000/api/products/order', {
+function postForm(firstName, lastName, addr, city, email, ids) {
+    fetch(`${BASE_URL}/products/order`, {
         method: "POST",
         headers: {
             "Content-type": "application/json"
@@ -314,16 +316,16 @@ function postForm(firstName, lastName, addr, city, email, ids){
             products: ids
         }),
     })
-    .then((res) => {
-        return res.json();
-    })
-    .then((result) => {
-        localStorage.clear()
-        document.location.href = `confirmation.html?commande=${result.orderId}`
-    })
-    .catch((err) => {
-        console.log(err);
-    })
+        .then((res) => {
+            return res.json();
+        })
+        .then((result) => {
+            localStorage.clear()
+            document.location.href = `confirmation.html?commande=${result.orderId}`
+        })
+        .catch((err) => {
+            console.log(err);
+        })
 }
 
 /**
@@ -331,7 +333,7 @@ function postForm(firstName, lastName, addr, city, email, ids){
  * @param {string} string 
  * @param {DomElement} divId 
  */
-function errorMessage(string, divId){
+function errorMessage(string, divId) {
     let errorContainer = document.getElementById(divId);
     errorContainer.textContent = string;
 }

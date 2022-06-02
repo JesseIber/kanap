@@ -1,12 +1,13 @@
+const BASE_URL = 'http://localhost:3000/api';
 const ID_PRODUCT = new URLSearchParams(window.location.search).get("id");
 var btnAddToCart = document.getElementById("addToCart");
 var quantity = document.getElementById('quantity');
 
 quantity.addEventListener('change', () => {
-    if(quantity.value > 100){
+    if (quantity.value > 100) {
         quantity.value = 100;
     }
-    if(quantity.value < 0){
+    if (quantity.value < 0) {
         quantity.value = 0;
     }
 })
@@ -15,7 +16,7 @@ quantity.addEventListener('change', () => {
  * Send fetch request to API for GET product using ID
  */
 function getProduct() {
-    fetch(`http://localhost:3000/api/products/${ID_PRODUCT}`)
+    fetch(`${BASE_URL}/products/${ID_PRODUCT}`)
         .then((res) => {
             return res.json();
         })
@@ -32,31 +33,31 @@ function getProduct() {
  * Print product
  * @param {Object} product 
  */
-function printProduct(product){
+function printProduct(product) {
     document.title = product["name"];
-            let imgContainer = document.getElementById("image");
-            let img = document.createElement("img");
-            img.src = product["imageUrl"];
-            img.alt = product["altTxt"];
-            imgContainer.appendChild(img);
+    let imgContainer = document.getElementById("image");
+    let img = document.createElement("img");
+    img.src = product["imageUrl"];
+    img.alt = product["altTxt"];
+    imgContainer.appendChild(img);
 
-            let title = document.getElementById("title");
-            title.textContent = product["name"];
+    let title = document.getElementById("title");
+    title.textContent = product["name"];
 
-            let price = document.getElementById("price");
-            price.textContent = product["price"];
+    let price = document.getElementById("price");
+    price.textContent = product["price"];
 
-            let description = document.getElementById("description");
-            description.textContent = product["description"];
+    let description = document.getElementById("description");
+    description.textContent = product["description"];
 
-            let select = document.getElementById("colors");
+    let select = document.getElementById("colors");
 
-            for (color in product["colors"]) {
-                let option = document.createElement('option');
-                option.value = product["colors"][color];
-                option.textContent = product["colors"][color];
-                select.appendChild(option);
-            }
+    for (color in product["colors"]) {
+        let option = document.createElement('option');
+        option.value = product["colors"][color];
+        option.textContent = product["colors"][color];
+        select.appendChild(option);
+    }
 }
 
 btnAddToCart.addEventListener("click", () => {
@@ -84,7 +85,7 @@ function addToCart() {
     let quantity = parseInt(document.getElementById("quantity").value);
     let color = document.getElementById("colors").value;
 
-    if(isFormValid(quantity, color)){
+    if (isFormValid(quantity, color)) {
         let product = { [color]: quantity }
 
         let cart = JSON.parse(localStorage.getItem("cart"));
@@ -124,7 +125,7 @@ function updateProduct() {
  */
 function isFormValid(quantity, color) {
     let isValid = false;
-    if(quantity != '0' && color != "")
+    if (quantity != '0' && color != "")
         isValid = true;
     return isValid;
 }
